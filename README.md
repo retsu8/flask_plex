@@ -11,11 +11,6 @@ To run this application you will need:
 2. cd flask_plex
 3. ```touch creds.json```
 4. Create uwsgi.ini
-5. Set env variables.
-6. run uwsgi:
-```uwsgi --ini .config/trakt_sync/uwsgi.ini```
-
-Run with uwsgi application:
 ```[uwsgi]
 http = :51120
 wsgi-file = path to git
@@ -30,3 +25,7 @@ env = CLIENT_ID=client_id
 env = CLIENT_SECRET=client_secret
 logto = path to logs
 safe-pidfile = path to pid file to keep track of running instance```
+
+5. Set env variables.
+6. run uwsgi:
+```uwsgi --ini .config/trakt_sync/uwsgi.ini```
