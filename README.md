@@ -11,7 +11,8 @@ To run this application you will need:
 2. cd flask_plex
 3. ```touch creds.json```
 4. Create uwsgi.ini
-```[uwsgi]
+```
+[uwsgi]
 http = :51120
 wsgi-file = path to git
 single-interpreter = true
