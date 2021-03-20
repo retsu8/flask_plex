@@ -25,7 +25,8 @@ env = URL=https://api.trakt.tv
 env = CLIENT_ID=client_id
 env = CLIENT_SECRET=client_secret
 logto = path to logs
-safe-pidfile = path to pid file to keep track of running instance```
+safe-pidfile = path to pid file to keep track of running instance
+```
 
 5. Set env variables.
 6. run uwsgi:
