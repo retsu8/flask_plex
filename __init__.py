@@ -1,1 +1,1 @@
-from .trakt import setup_plex
+from Trakt.trakt import setup_trakt

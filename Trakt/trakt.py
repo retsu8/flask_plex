@@ -4,11 +4,13 @@ import os
 import json
 import urllib3
 from json.decoder import JSONDecodeError
-from flask import Flask, request, jsonify
 from datetime import datetime
 from time import sleep
 
-json_url = os.environ['JSON_URL']
+if 'JSON_URL' in os.environ:
+    json_url = os.environ['JSON_URL']
+else:
+    json_url = 'db.json'
 
 class Trakt:
     url = os.environ['URL']
@@ -18,7 +20,11 @@ class Trakt:
     headers = {
         'Content-Type': 'application/json'
     }
-    user_code = "mysecretcodehere" if not 'SECRET_CODE' in os.environ else os.environ['SECRET_CODE']
+    if "SECRET_CODE" not in os.environ:
+        user_code = os.environ['SECRET_CODE']
+    else:
+        user_code = "mysecretcodehere"
+
     expires_in = 0
 
     def get_code(self):
@@ -159,7 +165,6 @@ class Trakt:
         show = self.build_tv_meta(meta)
         show['progress'] = 100
         self.build_request('/scrobble/stop', data=show, method="POST")
-
 
 def setup_trakt():
     trakt = Trakt()

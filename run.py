@@ -1,13 +1,10 @@
-import requests
 import sys
-import os
-import json
-import urllib3
-from json.decoder import JSONDecodeError
-from flask import Flask, request, jsonify
-from datetime import datetime
-from time import sleep
-from .trakt import setup_plex
+from json import loads
+from dotenv import load_dotenv
+from flask import Flask, request
+from Trakt.trakt import setup_trakt
+
+load_dotenv()
 
 trakt = setup_trakt()
 # main(sys.argv)
@@ -15,7 +12,7 @@ app = Flask(__name__)
 
 @ app.route('/', methods=['POST', 'GET'])
 def index():
-    data = json.loads(request.values['payload'])
+    data = loads(request.values['payload'])
     if 'Metadata' not in data:
         return {}
     if 'movie' in data['Metadata']['type']:
