@@ -18,7 +18,7 @@ class Trakt:
     headers = {
         'Content-Type': 'application/json'
     }
-    user_code = "mysecretcodehere" if not os.environ['SECRET_CODE'] else os.environ['SECRET_CODE']
+    user_code = "mysecretcodehere" if not 'SECRET_CODE' in os.environ else os.environ['SECRET_CODE']
     expires_in = 0
 
     def get_code(self):
@@ -171,8 +171,10 @@ def setup_trakt():
         print(e)
         db = {}
         pass
+    if not db:
+        return {}
     expires = db["created_at"] + db['expires_in']
-    if 'access_token' in db and expires > datetime.now().timestamp():
+    if True: # 'access_token' in db and expires > datetime.now().timestamp():
         trakt.reinstate_authorize(db)
 
     else:
@@ -181,28 +183,3 @@ def setup_trakt():
     return trakt
 
     f = open(json_url, "w")
-
-
-trakt = setup_trakt()
-# main(sys.argv)
-app = Flask(__name__)
-
-@ app.route('/', methods=['POST', 'GET'])
-def index():
-    data = json.loads(request.values['payload'])
-    if 'Metadata' not in data:
-        return {}
-    if 'movie' in data['Metadata']['type']:
-        if data['event'] == 'media.play':
-            trakt.start_movie(data['Metadata'])
-        if data['event'] == 'media.scrobble':
-            trakt.scrobble_movie(data['Metadata'])
-    elif 'episode' in data['Metadata']['type']:
-        if data['event'] == 'media.play':
-            trakt.start_episode(data['Metadata'])
-        if data['event'] == 'media.scrobble':
-            trakt.scrobble_episode(data['Metadata'])
-    return {}
-
-#app.run(host='0.0.0.0', port=51120)
-application = app
