@@ -1,11 +1,15 @@
 import sys
+import os
 from json import loads
 from dotenv import load_dotenv
+
+load_dotenv(".env")
+
 from flask import Flask, request
 from Trakt.trakt import setup_trakt
 
-load_dotenv()
 
+print(os.environ.__dict__)
 trakt = setup_trakt()
 # main(sys.argv)
 app = Flask(__name__)

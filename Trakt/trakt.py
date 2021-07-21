@@ -10,7 +10,7 @@ from time import sleep
 if 'JSON_URL' in os.environ:
     json_url = os.environ['JSON_URL']
 else:
-    json_url = 'db.json'
+    json_url = './db.json'
 
 class Trakt:
     url = os.environ['URL']
@@ -33,6 +33,7 @@ class Trakt:
         }
         req_json = self.build_request(
             '/oauth/device/code', data, method="POST")
+        print(req_json)
         self.user_code = req_json['user_code']
         self.device_code = req_json['device_code']
         self.expires_in = req_json["expires_in"]
@@ -53,7 +54,6 @@ class Trakt:
         while expires > datetime.now().timestamp():
             req = self.build_request(
                 "/oauth/device/token", data, method="POST")
-            print(req)
             if "access_token" in req:
                 self.access_token = req["access_token"]
                 self.expires_in = req["expires_in"]
@@ -88,7 +88,6 @@ class Trakt:
                 req = requests.get(url, headers=headers)
             elif "POST" in method:
                 req = requests.post(url, headers=headers, json=data)
-            print(req.status_code)
             print(req.__dict__)
             try:
                 return req.json()
@@ -168,16 +167,20 @@ class Trakt:
 
 def setup_trakt():
     trakt = Trakt()
-    f = open(json_url, "r")
     try:
+        f = open(json_url, "r")
         db = json.load(f)
-        print(db)
+        if not db:
+             raise FileNotFoundError
+        print(f"Got the db {db}")
     except JSONDecodeError as e:
-        print(e)
-        db = {}
         pass
-    if not db:
-        return {}
+    except FileNotFoundError as e:
+        print("db.json not found creating")
+        req_json = trakt.get_code()
+        print(req_json)
+        trakt.authorize()
+        sys.exit(0)
     expires = db["created_at"] + db['expires_in']
     if True: # 'access_token' in db and expires > datetime.now().timestamp():
         trakt.reinstate_authorize(db)
