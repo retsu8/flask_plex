@@ -32,7 +32,7 @@ class Trakt:
             "client_id": self.client_id
         }
         req_json = self.build_request(
-            '/oauth/device/code', data, method="POST")
+            '/oauth/device/code', self.headers, data, method="POST")
         print(req_json)
         self.user_code = req_json['user_code']
         self.device_code = req_json['device_code']
@@ -81,6 +81,10 @@ class Trakt:
     def build_request(self, url, headers={}, data={}, method="GET"):
         if not headers:
             headers = self.headers
+        print("These are the headers")
+        print(headers)
+        print("this is the body")
+        print(data)
         url = f'{self.url}{url}'
         try:
             req = None
