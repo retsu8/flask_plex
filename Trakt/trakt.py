@@ -32,7 +32,7 @@ class Trakt:
             "client_id": self.client_id
         }
         req_json = self.build_request(
-            '/oauth/device/code', self.headers, data, method="POST")
+            '/oauth/device/code', data=data, method="POST")
         print(req_json)
         self.user_code = req_json['user_code']
         self.device_code = req_json['device_code']
@@ -53,7 +53,7 @@ class Trakt:
         sleep(10)
         while expires > datetime.now().timestamp():
             req = self.build_request(
-                "/oauth/device/token", data, method="POST")
+                "/oauth/device/token", data=data, method="POST")
             if "access_token" in req:
                 self.access_token = req["access_token"]
                 self.expires_in = req["expires_in"]
@@ -99,7 +99,7 @@ class Trakt:
                 return {}
         except urllib3.exceptions.NewConnectionError:
             if self.refresh_token():
-                self.build_request(url, headers, data, method)
+                self.build_request(url=url, headers=headers, data=data, method=method)
             else:
                 print("Need to reauthorize")
                 # TODO: build reauthorize part
@@ -117,7 +117,7 @@ class Trakt:
 
     def get_watched_movies(self):
         url = f'/users/me/watched/movies'
-        return self.build_request(url, self.headers)
+        return self.build_request(url, headers=self.headers)
 
     def build_movie_meta(self, meta):
         movie = {"movie": {
