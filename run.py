@@ -8,7 +8,6 @@ load_dotenv(".env")
 from flask import Flask, request
 from Trakt.trakt import setup_trakt
 
-
 print(os.environ.__dict__)
 trakt = setup_trakt()
 # main(sys.argv)
