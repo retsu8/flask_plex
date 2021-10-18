@@ -33,7 +33,6 @@ class Trakt:
         }
         req_json = self.build_request(
             '/oauth/device/code', data=data, method="POST")
-        print(req_json)
         self.user_code = req_json['user_code']
         self.device_code = req_json['device_code']
         self.expires_in = req_json["expires_in"]
@@ -64,8 +63,8 @@ class Trakt:
                     'trakt-api-version': '2',
                     'trakt-api-key': self.client_id
                 })
-                return True
-            sleep(5)
+                return req
+            sleep(10)
         return False
 
     def refresh_token(self):
@@ -183,15 +182,17 @@ def setup_trakt():
         print("db.json not found creating")
         req_json = trakt.get_code()
         print(req_json)
-        trakt.authorize()
-        sys.exit(0)
+        db = trakt.authorize()
+        with open(json_url, "w") as outfile:
+            json.dump(db, outfile, indent=4)
     expires = db["created_at"] + db['expires_in']
-    if True: # 'access_token' in db and expires > datetime.now().timestamp():
+    if 'access_token' in db and expires > datetime.now().timestamp():
         trakt.reinstate_authorize(db)
 
     else:
         trakt.get_code()
         trakt.authorize()
+    print("returning")
     return trakt
 
     f = open(json_url, "w")
