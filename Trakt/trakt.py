@@ -137,15 +137,19 @@ class Trakt:
         movie = self.build_movie_meta(meta)
         self.build_request('/scrobble/start', data=movie, method="POST")
 
+    def search_for_show(meta):
+        filter = f"title={meta['parentIndex']}"
+        return self.build_request('/search/episode?{q}'.format(q=filter)method="GET")
+
     def build_tv_meta(self, meta):
-        episode = ''
-        if 'tvdb' in meta['guid']:
-            episode = meta['guid'].split('/')[2:]
-            episode = int(episode[0])
+        tv_shows = self.search_for_show(meta)
+        for show in tv_shows:
+            if show['type'] == 'show':
+                if show['show']['title'] == meta['grandparentTitle']:
+                    episode = show['ids']['trakt']
         show = {
             "show": {
                 "title": meta['grandparentTitle'],
-                "year": meta['year'],
                 "ids": {
                     "tvdb": episode
                 }
