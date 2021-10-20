@@ -139,10 +139,11 @@ class Trakt:
 
     def search_for_show(meta):
         filter = f"title={meta['parentIndex']}"
-        return self.build_request('/search/episode?{q}'.format(q=filter)method="GET")
+        return self.build_request('/search/episode?{q}'.format(q=filter) method="GET")
 
     def build_tv_meta(self, meta):
         tv_shows = self.search_for_show(meta)
+        print(tv_shows)
         for show in tv_shows:
             if show['type'] == 'show':
                 if show['show']['title'] == meta['grandparentTitle']:
