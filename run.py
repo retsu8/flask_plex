@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 #load_dotenv(".env")
 
 from flask import Flask, request
-from Trakt.trakt import setup_trakt
+from Trakt import trakt
 
-trakt = setup_trakt()
+trakt = trakt.setup_trakt()
 # main(sys.argv)
 app = Flask(__name__)
 
