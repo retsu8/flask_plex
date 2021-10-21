@@ -137,7 +137,7 @@ class Trakt:
         movie = self.build_movie_meta(meta)
         self.build_request('/scrobble/start', data=movie, method="POST")
 
-    def search_for_show(meta):
+    def search_for_show(self, meta):
         filter = f"title={meta['parentIndex']}"
         return self.build_request(f'/search/episode?{filter}', method="GET")
 
