@@ -4,10 +4,11 @@ import os
 import json
 import urllib3
 from json.decoder import JSONDecodeError
-from datetime import datetime
+from datetime import datetime, date
 from time import sleep
 import logging
 
+date = date()
 logging.basicConfig(filename=f'logs/flask_plex/trakt_{date}.log', level=logging.debug, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 if 'JSON_URL' in os.environ:
