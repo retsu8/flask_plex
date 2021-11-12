@@ -8,7 +8,7 @@ from datetime import datetime, date
 from time import sleep
 import logging
 
-date = date()
+date = date.today()
 logging.basicConfig(filename=f'logs/flask_plex/trakt_{date}.log', level=logging.debug, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 if 'JSON_URL' in os.environ:
