@@ -6,6 +6,9 @@ import urllib3
 from json.decoder import JSONDecodeError
 from datetime import datetime
 from time import sleep
+import logging
+
+logging.basicConfig(filename=f'logs/flask_plex/trakt_{date}.log', level=logging.debug, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 if 'JSON_URL' in os.environ:
     json_url = os.environ['JSON_URL']
@@ -36,8 +39,7 @@ class Trakt:
         self.user_code = req_json['user_code']
         self.device_code = req_json['device_code']
         self.expires_in = req_json["expires_in"]
-        print(
-            "Please input {user_code} into {verification_url}".format(**req_json))
+        app.logger.info("Please input {user_code} into {verification_url}".format(**req_json))
         return req_json
 
     def authorize(self):
@@ -80,10 +82,10 @@ class Trakt:
     def build_request(self, url, headers={}, data={}, method="GET"):
         if not headers:
             headers = self.headers
-        print("These are the headers")
-        print(headers)
-        print("this is the body")
-        print(data)
+        app.logger.info("These are the headers")
+        app.logger.info(headers)
+        app.logger.info("this is the body")
+        app.logger.info(data)
         url = f'{self.url}{url}'
         try:
             req = None
@@ -91,7 +93,7 @@ class Trakt:
                 req = requests.get(url, headers=headers)
             elif "POST" in method:
                 req = requests.post(url, headers=headers, json=data)
-            print(req.__dict__)
+            app.logger.info(req.__dict__)
             try:
                 return req.json()
             except:
@@ -100,7 +102,7 @@ class Trakt:
             if self.refresh_token():
                 self.build_request(url=url, headers=headers, data=data, method=method)
             else:
-                print("Need to reauthorize")
+                app.logger.info("Need to reauthorize")
                 # TODO: build reauthorize part
 
     def reinstate_authorize(self, state):
@@ -148,8 +150,8 @@ class Trakt:
                 episode = meta['show']['ids']['tvdb']
         else:
             tv_shows = self.search_for_show(meta)
-            print("This is the search")
-            print(tv_shows)
+            app.logger.info("This is the search")
+            app.logger.info(tv_shows)
             for show in tv_shows:
                 if show['type'] == 'show':
                     if show['show']['title'] == meta['grandparentTitle']:
@@ -186,13 +188,13 @@ def setup_trakt():
         db = json.load(f)
         if not db:
              raise FileNotFoundError
-        print(f"Got the db {db}")
+        app.logger.info(f"Got the db {db}")
     except JSONDecodeError as e:
         pass
     except FileNotFoundError as e:
-        print("db.json not found creating")
+        app.logger.info("db.json not found creating")
         req_json = trakt.get_code()
-        print(req_json)
+        app.logger.info(req_json)
         db = trakt.authorize()
         with open(json_url, "w") as outfile:
             json.dump(db, outfile, indent=4)
@@ -203,7 +205,7 @@ def setup_trakt():
     else:
         trakt.get_code()
         trakt.authorize()
-    print("returning")
+    app.logger.info("returning")
     return trakt
 
     f = open(json_url, "w")
