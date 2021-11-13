@@ -9,14 +9,14 @@ from time import sleep
 import logging
 
 date = date.today()
-logging.basicConfig(filename=f'logs/flask_plex/trakt_{date}.log', level=logging.debug, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+logging.basicConfig(level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 if 'JSON_URL' in os.environ:
     json_url = os.environ['JSON_URL']
 else:
     json_url = './db.json'
 
-class Trakt:
+class Trakt(app):
     url = os.environ['URL']
     client_id = os.environ["CLIENT_ID"]
     client_secret = os.environ["CLIENT_SECRET"]

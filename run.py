@@ -11,13 +11,12 @@ from flask import Flask, request
 from Trakt import trakt
 
 date = datetime.date()
-
-trakt = trakt.setup_trakt()
 # main(sys.argv)
 app = Flask(__name__)
 
-logging.basicConfig(filename=f'logs/flask_plex/{date}.log', level=logging.debug, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+logging.basicConfig(level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
+trakt = trakt.setup_trakt(app=app)
 @app.route('/', methods=['POST', 'GET'])
 def index():
     data = loads(request.values['payload'])
