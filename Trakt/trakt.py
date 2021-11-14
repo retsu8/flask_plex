@@ -185,7 +185,7 @@ class Trakt:
         self.build_request('/scrobble/stop', data=show, method="POST")
 
 def setup_trakt(app=None):
-    trakt = Trakt
+    trakt = Trakt()
     trakt.set_flask_app(app)
     try:
         f = open(json_url, "r")
