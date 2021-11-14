@@ -183,7 +183,6 @@ class Trakt:
 
 def setup_trakt():
     trakt = Trakt()
-    trakt.set_flask_app(app)
     try:
         f = open(json_url, "r")
         db = json.load(f)
