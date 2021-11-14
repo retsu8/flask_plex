@@ -192,13 +192,13 @@ def setup_trakt(app=None):
         db = json.load(f)
         if not db:
              raise FileNotFoundError
-        self.app.logger.info(f"Got the db {db}")
+        app.logger.info(f"Got the db {db}")
     except JSONDecodeError as e:
         pass
     except FileNotFoundError as e:
-        self.app.logger.info("db.json not found creating")
+        app.logger.info("db.json not found creating")
         req_json = trakt.get_code()
-        self.app.logger.info(req_json)
+        app.logger.info(req_json)
         db = trakt.authorize()
         with open(json_url, "w") as outfile:
             json.dump(db, outfile, indent=4)
