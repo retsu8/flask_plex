@@ -2,13 +2,12 @@ import sys
 import os
 from json import loads
 from dotenv import load_dotenv
+from flask import Flask, request
+from Trakt import trakt
 import logging
 import datetime
 
 #load_dotenv(".env")
-
-from flask import Flask, request
-from Trakt import trakt
 
 date = datetime.date()
 # main(sys.argv)
@@ -16,9 +15,10 @@ app = Flask(__name__)
 
 logging.basicConfig(level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
-trakt = trakt.setup_trakt(app=app)
+trakt = trakt.setup_trakt()
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    trakt.set_flask_app(app)
     data = loads(request.values['payload'])
     if 'Metadata' not in data:
         app.logger.info('Failed there is no Metadata')

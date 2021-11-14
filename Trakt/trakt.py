@@ -8,9 +8,6 @@ from datetime import datetime, date
 from time import sleep
 import logging
 
-date = date.today()
-logging.basicConfig(level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
-
 if 'JSON_URL' in os.environ:
     json_url = os.environ['JSON_URL']
 else:
@@ -184,7 +181,7 @@ class Trakt:
         show['progress'] = 100
         self.build_request('/scrobble/stop', data=show, method="POST")
 
-def setup_trakt(app=None):
+def setup_trakt():
     trakt = Trakt()
     trakt.set_flask_app(app)
     try:
@@ -192,13 +189,13 @@ def setup_trakt(app=None):
         db = json.load(f)
         if not db:
              raise FileNotFoundError
-        app.logger.info(f"Got the db {db}")
+        print(f"Got the db {db}")
     except JSONDecodeError as e:
         pass
     except FileNotFoundError as e:
-        app.logger.info("db.json not found creating")
+        print("db.json not found creating")
         req_json = trakt.get_code()
-        app.logger.info(req_json)
+        print(req_json)
         db = trakt.authorize()
         with open(json_url, "w") as outfile:
             json.dump(db, outfile, indent=4)
@@ -209,7 +206,7 @@ def setup_trakt(app=None):
     else:
         trakt.get_code()
         trakt.authorize()
-    app.logger.info("returning")
+    print("returning")
     return trakt
 
     f = open(json_url, "w")
