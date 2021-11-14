@@ -16,7 +16,7 @@ if 'JSON_URL' in os.environ:
 else:
     json_url = './db.json'
 
-class Trakt(app):
+class Trakt:
     url = os.environ['URL']
     client_id = os.environ["CLIENT_ID"]
     client_secret = os.environ["CLIENT_SECRET"]
@@ -40,7 +40,7 @@ class Trakt(app):
         self.user_code = req_json['user_code']
         self.device_code = req_json['device_code']
         self.expires_in = req_json["expires_in"]
-        app.logger.info("Please input {user_code} into {verification_url}".format(**req_json))
+        self.app.logger.info("Please input {user_code} into {verification_url}".format(**req_json))
         return req_json
 
     def authorize(self):
@@ -83,10 +83,10 @@ class Trakt(app):
     def build_request(self, url, headers={}, data={}, method="GET"):
         if not headers:
             headers = self.headers
-        app.logger.info("These are the headers")
-        app.logger.info(headers)
-        app.logger.info("this is the body")
-        app.logger.info(data)
+        self.app.logger.info("These are the headers")
+        self.app.logger.info(headers)
+        self.app.logger.info("this is the body")
+        self.app.logger.info(data)
         url = f'{self.url}{url}'
         try:
             req = None
@@ -94,7 +94,7 @@ class Trakt(app):
                 req = requests.get(url, headers=headers)
             elif "POST" in method:
                 req = requests.post(url, headers=headers, json=data)
-            app.logger.info(req.__dict__)
+            self.app.logger.info(req.__dict__)
             try:
                 return req.json()
             except:
@@ -103,7 +103,7 @@ class Trakt(app):
             if self.refresh_token():
                 self.build_request(url=url, headers=headers, data=data, method=method)
             else:
-                app.logger.info("Need to reauthorize")
+                self.app.logger.info("Need to reauthorize")
                 # TODO: build reauthorize part
 
     def reinstate_authorize(self, state):
@@ -151,8 +151,8 @@ class Trakt(app):
                 episode = meta['show']['ids']['tvdb']
         else:
             tv_shows = self.search_for_show(meta)
-            app.logger.info("This is the search")
-            app.logger.info(tv_shows)
+            self.app.logger.info("This is the search")
+            self.app.logger.info(tv_shows)
             for show in tv_shows:
                 if show['type'] == 'show':
                     if show['show']['title'] == meta['grandparentTitle']:
@@ -182,20 +182,22 @@ class Trakt(app):
         show['progress'] = 100
         self.build_request('/scrobble/stop', data=show, method="POST")
 
-def setup_trakt():
+def setup_trakt(app=None):
+    if app != None:
+        self.app = app
     trakt = Trakt()
     try:
         f = open(json_url, "r")
         db = json.load(f)
         if not db:
              raise FileNotFoundError
-        app.logger.info(f"Got the db {db}")
+        self.app.logger.info(f"Got the db {db}")
     except JSONDecodeError as e:
         pass
     except FileNotFoundError as e:
-        app.logger.info("db.json not found creating")
+        self.app.logger.info("db.json not found creating")
         req_json = trakt.get_code()
-        app.logger.info(req_json)
+        self.app.logger.info(req_json)
         db = trakt.authorize()
         with open(json_url, "w") as outfile:
             json.dump(db, outfile, indent=4)
@@ -206,7 +208,7 @@ def setup_trakt():
     else:
         trakt.get_code()
         trakt.authorize()
-    app.logger.info("returning")
+    self.app.logger.info("returning")
     return trakt
 
     f = open(json_url, "w")
