@@ -16,7 +16,8 @@ if 'JSON_URL' in os.environ:
 else:
     json_url = './db.json'
 
-class Trakt:
+class Trakt(app):
+    self.app = app
     url = os.environ['URL']
     client_id = os.environ["CLIENT_ID"]
     client_secret = os.environ["CLIENT_SECRET"]
@@ -183,9 +184,7 @@ class Trakt:
         self.build_request('/scrobble/stop', data=show, method="POST")
 
 def setup_trakt(app=None):
-    if app != None:
-        self.app = app
-    trakt = Trakt()
+    trakt = Trakt(app)
     try:
         f = open(json_url, "r")
         db = json.load(f)
@@ -208,7 +207,7 @@ def setup_trakt(app=None):
     else:
         trakt.get_code()
         trakt.authorize()
-    self.app.logger.info("returning")
+    app.logger.info("returning")
     return trakt
 
     f = open(json_url, "w")
